@@ -35,34 +35,32 @@ def export(input_filename, app_users_filename, output_dir):
                 all_event_ids.extend(event_ids)
         records = []
         for event_id in all_event_ids:
-            records.append({
-                "Name": name,
-                "E-Mail": email,
-                "Profil-ID": profile_id,
-                "TerminId": event_id,
-                "deviceIds": device_ids[profile_id],
-            })
+            records.append(
+                {
+                    "Name": name,
+                    "E-Mail": email,
+                    "Profil-ID": profile_id,
+                    "TerminId": event_id,
+                    "deviceIds": device_ids[profile_id],
+                }
+            )
         personal_df = pd.DataFrame.from_records(
-            records,
-            columns=["Name", "E-Mail", "Profil-ID", "TerminId", "deviceIds"]
+            records, columns=["Name", "E-Mail", "Profil-ID", "TerminId", "deviceIds"]
         )
         output_filename = os.path.join(output_dir, f"{profile_id}.xlsx")
         personal_df.to_excel(output_filename)
 
-        
+
 def get_args():
     parser = argparse.ArgumentParser(description="Export events per person")
     parser.add_argument(
-        "input_filename",
-        help="The main file containing all personal and events"
+        "input_filename", help="The main file containing all personal and events"
     )
     parser.add_argument(
-        "app_users_filename",
-        help="Contains a table with users and deviceids"
+        "app_users_filename", help="Contains a table with users and deviceids"
     )
     parser.add_argument(
-        "output_dir",
-        help="The target directory for the indivudual exports"
+        "output_dir", help="The target directory for the indivudual exports"
     )
     return parser.parse_args()
 
@@ -72,5 +70,5 @@ def main():
     export(args.input_filename, args.app_users_filename, args.output_dir)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
