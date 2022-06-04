@@ -6,7 +6,7 @@ Scouting BuLa "mova".
 ## Setup
 
 In order to run the scripts, the correct python packages need to be installed.
-It is advised to create a new virtual environment (e.g. via conda) and then
+It is advised to create a new virtual environment (e.g. via conda `conda create --name myenv`) and then
 install required packages with
 
 ```shell
