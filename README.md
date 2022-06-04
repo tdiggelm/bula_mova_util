@@ -10,7 +10,7 @@ It is advised to create a new virtual environment (e.g. via conda) and then
 install required packages with
 
 ```shell
-pip -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ## Export personal events
