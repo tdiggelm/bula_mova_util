@@ -4,24 +4,29 @@ import os
 from tqdm.autonotebook import tqdm
 
 
-def export(input_filename, output_dir):
+def export(input_filename, app_users_filename, output_dir):
     checks_start_col = 3
     header_rows = slice(2, 8)
     header_cols = slice(4, None)
     body_rows = slice(9, None)
     body_cols = slice(1, None)
 
-    df = pd.read_excel(input_filename)
+    df_main = pd.read_excel(input_filename)
+    df_devices = pd.read_excel(app_users_filename)
     os.makedirs(output_dir, exist_ok=True)
 
+    device_ids = {}
+    for _, row in df_devices.iterrows():
+        device_ids[row["profil_id"]] = row["deviceIds"]
+
     event_ids_per_day = []
-    header_data = df.iloc[header_rows, header_cols].transpose()
+    header_data = df_main.iloc[header_rows, header_cols].transpose()
     for row in header_data.itertuples(index=False):
         events = [event for event in row if pd.notna(event)]
         assert len(events) == len(set(events))
         event_ids_per_day.append([event for event in row if pd.notna(event)])
 
-    body_data = df.iloc[body_rows, body_cols]
+    body_data = df_main.iloc[body_rows, body_cols]
     for row in tqdm(body_data.itertuples(index=False), desc="Exporting files"):
         name, email, profile_id = row[0:3]
         all_event_ids = []
@@ -35,10 +40,11 @@ def export(input_filename, output_dir):
                 "E-Mail": email,
                 "Profil-ID": profile_id,
                 "TerminId": event_id,
+                "deviceIds": device_ids[profile_id],
             })
         personal_df = pd.DataFrame.from_records(
             records,
-            columns=["Name", "E-Mail", "Profil-ID", "TerminId"]
+            columns=["Name", "E-Mail", "Profil-ID", "TerminId", "deviceIds"]
         )
         output_filename = os.path.join(output_dir, f"{profile_id}.xlsx")
         personal_df.to_excel(output_filename)
@@ -51,6 +57,10 @@ def get_args():
         help="The main file containing all personal and events"
     )
     parser.add_argument(
+        "app_users_filename",
+        help="Contains a table with users and deviceids"
+    )
+    parser.add_argument(
         "output_dir",
         help="The target directory for the indivudual exports"
     )
@@ -59,7 +69,7 @@ def get_args():
 
 def main():
     args = get_args()
-    export(args.input_filename, args.output_dir)
+    export(args.input_filename, args.app_users_filename, args.output_dir)
 
 
 if __name__ == '__main__':
