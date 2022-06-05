@@ -50,16 +50,14 @@ def export(input_filename, app_users_filename, output_path, split_exports):
         all_records.append((profile_id, records))
 
     columns = ["Name", "E-Mail", "Profil-ID", "TerminId", "_deviceId"]
-    
+
     if split_exports:
         for profile_id, records in all_records:
             personal_df = pd.DataFrame.from_records(records, columns=columns)
             output_filename = os.path.join(output_path, f"{profile_id}.xlsx")
             personal_df.to_excel(output_filename, index=False)
     else:
-        merged_records = chain.from_iterable(
-            records for _, records in all_records
-        )
+        merged_records = chain.from_iterable(records for _, records in all_records)
         merged_df = pd.DataFrame.from_records(merged_records, columns=columns)
         merged_df.to_excel(output_path, index=False)
 
@@ -73,12 +71,20 @@ def get_args():
         "input_app_users_filename", help="Contains a table with users and deviceids"
     )
     parser.add_argument(
-        "output_path", help="The target output path: a **directory** that is used for outputting individial xlsx exports for each person if flag `--split_exports is set, otherwise an **filename** where the entire export is written to as xlsx"
+        "output_path",
+        help=(
+            "The target output path: a **directory** that is used for outputting"
+            " individial xlsx exports for each person if flag `--split_exports is set,"
+            " otherwise an **filename** where the entire export is written to as xlsx"
+        ),
     )
     parser.add_argument(
         "--split-exports",
         action="store_true",
-        help="writes individual outputs for each person if set, otherwise merges all outputs into single file"
+        help=(
+            "writes individual outputs for each person if set, otherwise merges all"
+            " outputs into single file"
+        ),
     )
     return parser.parse_args()
 
