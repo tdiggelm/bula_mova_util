@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 ## Export personal events
 
-Export everything into a single files xlsx file:
+Export everything into a single xlsx file:
 
 ```shell
 python scripts/export-events-per-person.py \
